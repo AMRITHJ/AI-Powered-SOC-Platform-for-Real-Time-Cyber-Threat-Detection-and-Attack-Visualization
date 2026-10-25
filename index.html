@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI-Powered SOC Dashboard</title>
+
+
+    <!-- =====================================================
+         MAIN CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <!-- =====================================================
+         GOOGLE FONT
+         ===================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         LEAFLET
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet/dist/leaflet.css"
+    >
+
+
+    <!-- =====================================================
+         CHART.JS
+         ===================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+
+    <!-- =====================================================
+         SOCKET.IO
+         ===================================================== -->
+
+    <script
+        src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+    ></script>
+
+
+    <!-- =====================================================
+         LEAFLET JS
+         ===================================================== -->
+
+    <script
+        src="https://unpkg.com/leaflet/dist/leaflet.js"
+    ></script>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     SIDEBAR
+     ========================================================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-text">
+
+            <h2>SOC</h2>
+
+            <h2>AI</h2>
+
+        </div>
+
+
+        <div class="logo-name">
+
+            <span>
+                Cyber Security
+            </span>
+
+            <span>
+                Platform
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <ul class="menu">
+
+        <li class="active">
+            <a href="#overview">
+                Dashboard
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#traffic">
+                Live Monitoring
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#timeline-section">
+                Threat Timeline
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#attack-distribution">
+                Attack Distribution
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#threat-intelligence">
+                Threat Intelligence
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#alerts-section">
+                Alerts
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#map-section">
+                Attack Map
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#devices-section">
+                Connected Devices
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#topology-section">
+                Topology
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#reports">
+                Reports
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<main class="main">
+
+
+    <!-- =====================================================
+         DASHBOARD / OVERVIEW
+         ===================================================== -->
+
+    <section
+        id="overview"
+        class="dashboard-section overview-section"
+    >
+
+        <header>
+
+            <div>
+
+                <h1>
+                    AI-Powered SOC Dashboard
+                </h1>
+
+                <p>
+                    Real-Time Threat Intelligence &amp;
+                    Attack Visualization
+                </p>
+
+            </div>
+
+
+            <!-- BACKEND STATUS -->
+
+            <div
+                class="status"
+                id="backendStatus"
+            >
+
+                <span
+                    id="statusIndicator"
+                    class="status-indicator offline"
+                ></span>
+
+                <span id="statusText">
+                    🔴 OFFLINE
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             STATISTICS
+             ================================================= -->
+
+        <div class="cards">
+
+
+            <!-- TOTAL PACKETS -->
+
+            <div class="card packet-card">
+
+                <h3>
+                    Total Packets
+                </h3>
+
+                <h2 id="packets">
+                    0
+                </h2>
+
+            </div>
+
+
+            <!-- THREATS -->
+
+            <div class="card threat-card">
+
+                <h3>
+                    Threats Detected
+                </h3>
+
+                <h2 id="threats">
+                    0
+                </h2>
+
+            </div>
+
+
+            <!-- DEVICES -->
+
+            <div class="card device-card">
+
+                <h3>
+                    Connected Devices
+                </h3>
+
+                <h2 id="devices">
+                    0
+                </h2>
+
+            </div>
+
+
+            <!-- AI ACCURACY -->
+
+            <div class="card">
+
+                <h3>
+                    AI Accuracy
+                </h3>
+
+                <h2 id="aiAccuracy">
+                    97.68%
+                </h2>
+
+            </div>
+
+
+            <!-- LSTM ACCURACY -->
+
+            <div class="card">
+
+                <h3>
+                    LSTM Accuracy
+                </h3>
+
+                <h2 id="lstmAccuracy">
+                    93.68%
+                </h2>
+
+            </div>
+
+
+            <!-- THREAT LEVEL -->
+
+            <div class="card">
+
+                <h3>
+                    Threat Level
+                </h3>
+
+                <h2
+                    id="threatLevel"
+                    class="danger"
+                >
+                    HIGH
+                </h2>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         LIVE MONITORING
+         ===================================================== -->
+
+    <section
+        id="traffic"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Live Monitoring
+            </h1>
+
+            <p>
+                Real-time network traffic and protocol activity
+            </p>
+
+        </div>
+
+
+        <!-- NETWORK TRAFFIC -->
+
+        <div class="panel full-panel">
+
+            <h2>
+                Network Traffic
+            </h2>
+
+            <div
+                class="chart-container traffic-container"
+            >
+
+                <canvas
+                    id="trafficChart"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROTOCOL USAGE -->
+
+        <div class="panel full-panel">
+
+            <h2>
+                Protocol Usage
+            </h2>
+
+
+            <div class="chart-container">
+
+                <canvas
+                    id="protocolChart"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         THREAT TIMELINE
+         ===================================================== -->
+
+    <section
+        id="timeline-section"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Threat Timeline
+            </h1>
+
+            <p>
+                Chronological view of detected security events
+            </p>
+
+        </div>
+
+
+        <div class="panel full-panel">
+
+            <h2>
+                Threat Activity Timeline
+            </h2>
+
+            <div
+                class="chart-container traffic-container"
+            >
+
+                <canvas
+                    id="timelineChart"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ATTACK DISTRIBUTION
+         ===================================================== -->
+
+    <section
+        id="attack-distribution"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Attack Distribution
+            </h1>
+
+            <p>
+                Distribution of detected attack types
+            </p>
+
+        </div>
+
+
+        <div
+            class="panel full-panel attack-distribution-panel"
+        >
+
+            <h2>
+                Detected Attack Types
+            </h2>
+
+            <div
+                class="chart-container attack-chart-container"
+            >
+
+                <canvas
+                    id="attackChart"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         THREAT INTELLIGENCE
+         ===================================================== -->
+
+    <section
+        id="threat-intelligence"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Threat Intelligence
+            </h1>
+
+            <p>
+                External intelligence and threat enrichment
+            </p>
+
+        </div>
+
+
+        <div class="panel full-panel">
+
+            <h2>
+                Threat Intelligence Feed
+            </h2>
+
+
+            <div
+                id="threatFeed"
+                class="threat-feed"
+            >
+
+                <p>
+                    Waiting for live threat intelligence...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         SECURITY ALERTS
+         ===================================================== -->
+
+    <section
+        id="alerts-section"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Security Alerts
+            </h1>
+
+            <p>
+                Recent detected threats and security events
+            </p>
+
+        </div>
+
+
+        <div class="panel full-panel">
+
+            <h2>
+                Recent Alerts
+            </h2>
+
+
+            <div id="alerts">
+
+                <p>
+                    No alerts detected.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ATTACK MAP
+         ===================================================== -->
+
+    <section
+        id="map-section"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Attack Map
+            </h1>
+
+            <p>
+                Global visualization of detected attacks
+            </p>
+
+        </div>
+
+
+        <div
+            class="panel full-panel map-panel"
+        >
+
+            <h2>
+                Live World Attack Map
+            </h2>
+
+
+            <div id="map"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CONNECTED DEVICES
+         ===================================================== -->
+
+    <section
+        id="devices-section"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Connected Devices
+            </h1>
+
+            <p>
+                Devices detected on the monitored network
+            </p>
+
+        </div>
+
+
+        <div class="panel full-panel">
+
+            <h2>
+                Network Devices
+            </h2>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Hostname
+                            </th>
+
+                            <th>
+                                IP Address
+                            </th>
+
+                            <th>
+                                Operating System
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <!--
+                        IMPORTANT:
+                        api.js writes live device rows here.
+
+                        This ID must be deviceTableBody.
+                    -->
+
+                    <tbody id="deviceTableBody">
+
+                        <tr>
+
+                            <td>
+                                Waiting...
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                            <td>
+                                —
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         NETWORK TOPOLOGY
+         ===================================================== -->
+
+    <section
+        id="topology-section"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Network Topology
+            </h1>
+
+            <p>
+                Visual representation of connected network devices
+            </p>
+
+        </div>
+
+
+        <div
+            class="panel full-panel topology-panel"
+        >
+
+            <h2>
+                Network Architecture
+            </h2>
+
+
+            <div class="topology-container">
+
+                <canvas
+                    id="topologyCanvas"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         REPORTS
+         ===================================================== -->
+
+    <section
+        id="reports"
+        class="dashboard-section"
+    >
+
+        <div class="section-header">
+
+            <h1>
+                Reports
+            </h1>
+
+            <p>
+                Security detection and forensic reports
+            </p>
+
+        </div>
+
+
+        <div class="panel full-panel">
+
+            <h2>
+                Security Reports
+            </h2>
+
+
+            <div id="reportContainer">
+
+                <p>
+                    Detection reports will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script
+    src="charts.js"
+></script>
+
+<script
+    src="map.js"
+></script>
+
+<script
+    src="socket.js"
+></script>
+
+<script
+    src="api.js"
+></script>
+
+<script
+    src="topology.js"
+></script>
+
+
+</body>
+
+</html>
